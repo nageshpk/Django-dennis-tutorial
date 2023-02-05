@@ -61,11 +61,10 @@ def registerUser(request):
             user.save()
             login(request, user)
             return redirect('home')
-    else:
-      messages.error(request, "An error occurred during registration")
+        else:
+            messages.error(request, "An error occurred during registration")
 
     return render(request, 'base/login_register.html', {'form': form})
-
 
 
 def home(request):
@@ -80,10 +79,10 @@ def home(request):
     return render(request, "base/home.html", context)
 
 
-
 def room(request, pk):
     room = Room.objects.get(id=pk)
-    context = {'room': room}
+    room_messages = room.message_set.all().order_by('-created')
+    context = {'room': room, 'room_messages': room_messages}
     return render(request, "base/room.html", context)
 
 
@@ -99,7 +98,6 @@ def createRoom(request):
 
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
-
 
 
 @login_required(login_url='login')
@@ -118,7 +116,6 @@ def updateRoom(request, pk):
 
     context = {'form': form}
     return render(request, 'base/room_form.html', context)
-
 
 
 @login_required(login_url='login')
