@@ -12,12 +12,6 @@ from django.contrib.auth import authenticate, login, logout
 # Create your views here.
 # from django.http import HttpResponse
 
-# rooms = [
-#   {'id': 1, 'name': "Let's learn python"},
-#   {'id': 2, 'name': "Design with me"},
-#   {'id': 3, 'name': "Frontend Developers"}
-# ]
-
 
 def loginPage(request):
     page = 'login'
@@ -70,8 +64,9 @@ def registerUser(request):
 def home(request):
     q = request.GET.get('q') if request.GET.get('q') != None else ''
     rooms = Room.objects.filter(
-        Q(topic__name__icontains=q) | Q(name__icontains=q)
-        | Q(description__icontains=q))
+        Q(topic__name__icontains=q) | 
+        Q(name__icontains=q) | 
+        Q(description__icontains=q))
 
     topics = Topic.objects.all()
     room_count = rooms.count()
@@ -102,6 +97,16 @@ def room(request, pk):
     return render(request, "base/room.html", context)
 
 
+def userProfile(request, pk):
+  user = User.objects.get(id=pk)
+  rooms = user.room_set.all()
+  room_message = user.message_set.all()
+  topics = Topic.objects.all()
+  context = {'user': user, 'rooms': rooms, 'room_message': room_message, 'topics': topics}
+  return render(request, 'base/profile.html', context)
+
+
+
 @login_required(login_url='login')
 def createRoom(request):
     form = RoomForm()
@@ -109,7 +114,9 @@ def createRoom(request):
     if request.method == "POST":
         form = RoomForm(request.POST)
         if form.is_valid():
-            form.save()
+            room = form.save(commit = False)
+            room.host = request.user
+            room.save()
             return redirect('home')
 
     context = {'form': form}
