@@ -66,7 +66,7 @@
       <div class="room__box scroll">
         <div class="room__header scroll">
           <div class="room__info">
-            <h3>{{rom.name}}</h3>
+            <h3>{{room.name}}</h3>
             <span>{{room.created|timesince}}</span>
           </div>
           <div class="room__hosted">
@@ -78,7 +78,7 @@
               <span>@{{room.host.username}}</span>
             </a>
           </div>
-          <span class="room__topics">JavaScript</span>
+          <span class="room__topics">{{room.topic.name}}</span>
         </div>
         <div class="room__conversation">
           <div class="threads scroll">
